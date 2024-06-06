@@ -31,21 +31,8 @@ android {
 
 publishing {
     publications {
-        create<MavenPublication>("maven") {
-            groupId = "com.py.contiappapi"
-            artifactId = "contilibrary"
-            version = "0.0.3"
-        }
-    }
-
-    repositories {
-        maven {
-            name = "GithubPackages"
-            url = uri("https://maven.pkg.github.com/davidedumaster/contiappapi")
-            credentials {
-                username = "davidedumaster"
-                password = "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"
-            }
+        create<MavenPublication>("release") {
+            from(components["release"])
         }
     }
 }
