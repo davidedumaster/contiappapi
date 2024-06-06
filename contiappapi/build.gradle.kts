@@ -29,27 +29,18 @@ android {
     }
 }
 
-dependencies {
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("com.google.android.material:material:1.12.0")
-    implementation("org.apache.httpcomponents:httpclient:4.5.14")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-}
-
 publishing {
     publications {
         create<MavenPublication>("maven") {
             groupId = "com.py.contiappapi"
-            artifactId = "library"
-            version = "0.0.2"
+            artifactId = "contilibrary"
+            version = "0.0.3"
         }
     }
 
     repositories {
         maven {
-            name  = "GithubPackages"
+            name = "GithubPackages"
             url = uri("https://maven.pkg.github.com/davidedumaster/contiappapi")
             credentials {
                 username = "davidedumaster"
@@ -57,4 +48,13 @@ publishing {
             }
         }
     }
+}
+
+dependencies {
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("com.google.android.material:material:1.12.0")
+    implementation("org.apache.httpcomponents:httpclient:4.5.14")
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }

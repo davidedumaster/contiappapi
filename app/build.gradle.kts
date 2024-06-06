@@ -38,7 +38,7 @@ android {
 dependencies {
 
     implementation("androidx.core:core-ktx:1.9.0")
-    implementation("com.py.contiappapi:library:0.0.2")
+    implementation("com.py.contiappapi:contilibrary:0.0.3")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
