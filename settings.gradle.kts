@@ -19,3 +19,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "bancontinentalapi"
 include(":app")
+include(":contiappapi")
