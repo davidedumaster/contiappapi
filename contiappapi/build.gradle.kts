@@ -34,7 +34,7 @@ publishing {
         register<MavenPublication>("release") {
             groupId = "com.py.contiappapi"
             artifactId = "contiappapi"
-            version = "0.1.2"
+            version = "0.1.3"
             pom {
                 description.set("First release")
             }
@@ -42,6 +42,7 @@ publishing {
     }
     repositories {
         mavenLocal()
+
     }
 }
 
