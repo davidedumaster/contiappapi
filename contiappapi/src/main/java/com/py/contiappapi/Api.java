@@ -21,11 +21,13 @@ public class Api {
     private String baseUrl;
     private List<RequestInterceptor> requestInterceptors;
     private List<ResponseInterceptor> responseInterceptors;
+    private List<String[]> defaultHeaders;
 
     public Api(String baseUrl) {
         this.baseUrl = baseUrl;
         this.requestInterceptors = new ArrayList<>();
         this.responseInterceptors = new ArrayList<>();
+        this.defaultHeaders = new ArrayList<>();
     }
 
     // Método para agregar interceptores de solicitud
@@ -38,65 +40,56 @@ public class Api {
         this.responseInterceptors.add(interceptor);
     }
 
-    // Método GET
-    public String get(String endpoint) throws Exception {
-        URL url = new URL(baseUrl + endpoint);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-
-        applyRequestInterceptors(connection);
-
-        String response = getResponse(connection);
-        applyResponseInterceptors(connection, response);
-
-        return response;
+    // Método para agregar encabezados por defecto
+    public void addDefaultHeaders(String[] headers) {
+        this.defaultHeaders.add(headers);
     }
 
-    // Método POST
-    public String post(String endpoint, String jsonInputString) throws Exception {
-        URL url = new URL(baseUrl + endpoint);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/json; utf-8");
-        connection.setRequestProperty("Accept", "application/json");
-        connection.setDoOutput(true);
-
-        applyRequestInterceptors(connection);
-
-        writeRequestBody(connection, jsonInputString);
-
-        String response = getResponse(connection);
-        applyResponseInterceptors(connection, response);
-
-        return response;
+    // Método GET optimizado
+    public String get(String endpoint, String[][] customHeaders) throws Exception {
+        return executeRequest("GET", endpoint, null, customHeaders);
     }
 
-    // Método PUT
-    public String put(String endpoint, String jsonInputString) throws Exception {
-        URL url = new URL(baseUrl + endpoint);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("PUT");
-        connection.setRequestProperty("Content-Type", "application/json; utf-8");
-        connection.setRequestProperty("Accept", "application/json");
-        connection.setDoOutput(true);
-
-        applyRequestInterceptors(connection);
-
-        writeRequestBody(connection, jsonInputString);
-
-        String response = getResponse(connection);
-        applyResponseInterceptors(connection, response);
-
-        return response;
+    // Método POST optimizado
+    public String post(String endpoint, String jsonInputString, String[][] customHeaders) throws Exception {
+        return executeRequest("POST", endpoint, jsonInputString, customHeaders);
     }
 
-    // Método DELETE
-    public String delete(String endpoint) throws Exception {
+    // Método PUT optimizado
+    public String put(String endpoint, String jsonInputString, String[][] customHeaders) throws Exception {
+        return executeRequest("PUT", endpoint, jsonInputString, customHeaders);
+    }
+
+    // Método DELETE optimizado
+    public String delete(String endpoint, String[][] customHeaders) throws Exception {
+        return executeRequest("DELETE", endpoint, null, customHeaders);
+    }
+
+    // Método genérico para ejecutar solicitudes HTTP
+    private String executeRequest(String method, String endpoint, String requestBody, String[][] customHeaders) throws Exception {
         URL url = new URL(baseUrl + endpoint);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("DELETE");
+        connection.setRequestMethod(method);
 
         applyRequestInterceptors(connection);
+
+        // Aplicar encabezados por defecto si no se proporcionan encabezados personalizados
+        if (customHeaders == null || customHeaders.length == 0) {
+            for (String[] header : defaultHeaders) {
+                connection.setRequestProperty(header[0], header[1]);
+            }
+        } else { // Si se proporcionan encabezados personalizados, aplicarlos
+            for (String[] header : customHeaders) {
+                connection.setRequestProperty(header[0], header[1]);
+            }
+        }
+
+        if (method.equals("POST") || method.equals("PUT")) {
+            connection.setDoOutput(true);
+            if (requestBody != null) {
+                writeRequestBody(connection, requestBody);
+            }
+        }
 
         String response = getResponse(connection);
         applyResponseInterceptors(connection, response);
