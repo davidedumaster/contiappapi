@@ -46,27 +46,27 @@ public class Api {
     }
 
     // Método GET optimizado
-    public String get(String endpoint, String[][] customHeaders) throws Exception {
+    public HttpResponse get(String endpoint, String[][] customHeaders) throws Exception {
         return executeRequest("GET", endpoint, null, customHeaders);
     }
 
     // Método POST optimizado
-    public String post(String endpoint, String jsonInputString, String[][] customHeaders) throws Exception {
+    public HttpResponse post(String endpoint, String jsonInputString, String[][] customHeaders) throws Exception {
         return executeRequest("POST", endpoint, jsonInputString, customHeaders);
     }
 
     // Método PUT optimizado
-    public String put(String endpoint, String jsonInputString, String[][] customHeaders) throws Exception {
+    public HttpResponse put(String endpoint, String jsonInputString, String[][] customHeaders) throws Exception {
         return executeRequest("PUT", endpoint, jsonInputString, customHeaders);
     }
 
     // Método DELETE optimizado
-    public String delete(String endpoint, String[][] customHeaders) throws Exception {
+    public HttpResponse delete(String endpoint, String[][] customHeaders) throws Exception {
         return executeRequest("DELETE", endpoint, null, customHeaders);
     }
 
     // Método genérico para ejecutar solicitudes HTTP
-    private String executeRequest(String method, String endpoint, String requestBody, String[][] customHeaders) throws Exception {
+    private HttpResponse executeRequest(String method, String endpoint, String requestBody, String[][] customHeaders) throws Exception {
         URL url = new URL(baseUrl + endpoint);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(method);
@@ -91,8 +91,8 @@ public class Api {
             }
         }
 
-        String response = getResponse(connection);
-        applyResponseInterceptors(connection, response);
+        HttpResponse response = getResponse(connection);
+        applyResponseInterceptors(connection, response.getContent());
 
         return response;
     }
@@ -106,7 +106,7 @@ public class Api {
     }
 
     // Método para obtener la respuesta
-    private String getResponse(HttpURLConnection connection) throws Exception {
+    private HttpResponse getResponse(HttpURLConnection connection) throws Exception {
         int status = connection.getResponseCode();
         BufferedReader reader;
 
@@ -128,7 +128,7 @@ public class Api {
             throw new Exception("Error: " + status + " - " + content.toString());
         }
 
-        return content.toString();
+        return new HttpResponse(status, content.toString());
     }
 
     // Aplicar interceptores de solicitud
